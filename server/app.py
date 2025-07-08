@@ -42,6 +42,32 @@ logging.getLogger("aiortc.rtcrtpreceiver").setLevel(logging.WARNING)
 MAX_BITRATE = 2000000
 MIN_BITRATE = 2000000
 
+DEFAULT_PROMPT = """
+{
+  "1": {
+    "inputs": {
+      "image": "example.png",
+      "upload": "image"
+    },
+    "class_type": "LoadImage",
+    "_meta": {
+      "title": "Load Image"
+    }
+  },
+  "3": {
+    "inputs": {
+      "images": [
+        "1",
+        0
+      ]
+    },
+    "class_type": "PreviewImage",
+    "_meta": {
+      "title": "Preview Image"
+    }
+  }
+}
+"""
 
 class VideoStreamTrack(MediaStreamTrack):
     """video stream track that processes video frames using a pipeline.
@@ -221,6 +247,9 @@ async def offer(request):
 
     params = await request.json()
     
+    if not "prompts" in params:
+        params["prompts"] = json.loads(DEFAULT_PROMPT)
+
     prompts = params["prompts"]
     await pipeline.set_prompts(prompts)
 
